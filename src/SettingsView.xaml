@@ -1,0 +1,138 @@
+﻿<UserControl x:Class="RpShiftTracker.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="840"
+             Background="#121212">
+
+    <UserControl.Resources>
+        <!-- Color resources -->
+        <SolidColorBrush x:Key="BgColor" Color="#121212"/>
+        <SolidColorBrush x:Key="PrimaryText" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="MutedText" Color="#AAAAAA"/>
+        <SolidColorBrush x:Key="Accent" Color="#64B5F6"/>
+        <SolidColorBrush x:Key="CardBg" Color="#181818"/>
+        <SolidColorBrush x:Key="Divider" Color="#252525"/>
+        <SolidColorBrush x:Key="CheckUpdatesButtonBg" Color="#1E88E5"/>
+        <SolidColorBrush x:Key="CheckUpdatesButtonHover" Color="#1565C0"/>
+
+        <!-- Check Updates Button Style -->
+        <Style x:Key="CheckUpdatesButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource CheckUpdatesButtonBg}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,4"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="2">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource CheckUpdatesButtonHover}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <StackPanel Margin="32,32">
+            <!-- Header -->
+            <TextBlock Text="Settings" 
+                       FontFamily="Segoe UI" 
+                       FontSize="20" 
+                       FontWeight="Bold"
+                       Foreground="{StaticResource PrimaryText}"
+                       Margin="0,0,0,4"/>
+
+            <TextBlock Text="Manage updates and view information about the Roleplay Shift Tracker." 
+                       FontFamily="Segoe UI" 
+                       FontSize="11"
+                       Foreground="{StaticResource MutedText}"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,16"/>
+
+            <!-- Updates Card -->
+            <Border Background="{StaticResource CardBg}"
+                    BorderBrush="{StaticResource Divider}"
+                    BorderThickness="1"
+                    Margin="0,0,0,16"
+                    Padding="12,10">
+                <StackPanel>
+                    <TextBlock Text="⬆  Updates" 
+                               FontFamily="Segoe UI" 
+                               FontSize="13" 
+                               FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryText}"
+                               Margin="0,0,0,2"/>
+
+                    <TextBlock Text="Check if a newer version of the Roleplay Shift Tracker is available.&#x0a;This will contact the update server in a future version." 
+                               FontFamily="Segoe UI" 
+                               FontSize="11"
+                               Foreground="{StaticResource MutedText}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,10"/>
+
+                    <Button x:Name="CheckUpdatesButton"
+                            Content="Check for Updates"
+                            Style="{StaticResource CheckUpdatesButtonStyle}"
+                            HorizontalAlignment="Left"
+                            Click="CheckUpdatesButton_Click"/>
+                </StackPanel>
+            </Border>
+
+            <!-- About Card -->
+            <Border Background="{StaticResource CardBg}"
+                    BorderBrush="{StaticResource Divider}"
+                    BorderThickness="1"
+                    Padding="12,10">
+                <StackPanel>
+                    <TextBlock Text="ℹ  About" 
+                               FontFamily="Segoe UI" 
+                               FontSize="13" 
+                               FontWeight="Bold"
+                               Foreground="{StaticResource PrimaryText}"
+                               Margin="0,0,0,2"/>
+
+                    <TextBlock x:Name="VersionLabel"
+                               Text="Version 0.000"
+                               FontFamily="Segoe UI" 
+                               FontSize="11" 
+                               FontWeight="Bold"
+                               Foreground="{StaticResource Accent}"
+                               Margin="0,0,0,6"/>
+
+                    <TextBlock Text="Roleplay Shift Tracker is created by DRAGEno01.&#x0a;For more tools and projects, visit the creator's website:" 
+                               FontFamily="Segoe UI" 
+                               FontSize="11"
+                               Foreground="{StaticResource MutedText}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,6"/>
+
+                    <TextBlock x:Name="WebsiteLink"
+                               Text="https://drageno01.web.app/"
+                               FontFamily="Segoe UI" 
+                               FontSize="11"
+                               TextDecorations="Underline"
+                               Foreground="{StaticResource Accent}"
+                               Cursor="Hand"
+                               MouseDown="WebsiteLink_MouseDown"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>
+

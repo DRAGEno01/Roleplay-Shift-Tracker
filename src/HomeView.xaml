@@ -1,0 +1,293 @@
+﻿<UserControl x:Class="RpShiftTracker.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="840"
+             Background="#121212">
+
+    <UserControl.Resources>
+        <!-- Reuse color resources -->
+        <SolidColorBrush x:Key="BgColor" Color="#121212"/>
+        <SolidColorBrush x:Key="PrimaryText" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="MutedText" Color="#AAAAAA"/>
+        <SolidColorBrush x:Key="Accent" Color="#64B5F6"/>
+        <SolidColorBrush x:Key="Positive" Color="#4CAF50"/>
+        <SolidColorBrush x:Key="ButtonBg" Color="#1E1E1E"/>
+        <SolidColorBrush x:Key="Divider" Color="#252525"/>
+        <SolidColorBrush x:Key="ClockInBg" Color="#1E88E5"/>
+        <SolidColorBrush x:Key="ClockInHover" Color="#1565C0"/>
+        <SolidColorBrush x:Key="ClockOutBg" Color="#EF5350"/>
+        <SolidColorBrush x:Key="ClockOutHover" Color="#C62828"/>
+
+        <!-- ComboBox Style for Dark Theme -->
+        <Style x:Key="DarkComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource ButtonBg}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryText}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Divider}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Border for the left area -->
+                            <Border Grid.Column="0"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="2,0,0,2">
+                                <Grid>
+                                    <ContentPresenter Name="ContentSite"
+                                                    IsHitTestVisible="False"
+                                                    Content="{TemplateBinding SelectionBoxItem}"
+                                                    ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                    ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                    Margin="4,2,4,2"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Left"/>
+                                    <TextBox Name="PART_EditableTextBox"
+                                           Style="{x:Null}"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Margin="4,2,4,2"
+                                           Focusable="True"
+                                           Background="Transparent"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           BorderThickness="0"
+                                           Visibility="Hidden"
+                                           IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                                    <!-- Transparent button overlay to make entire area clickable -->
+                                    <Button Background="Transparent"
+                                            BorderThickness="0"
+                                            Focusable="False"
+                                            Click="ComboBoxArea_Click"/>
+                                </Grid>
+                            </Border>
+                            <ToggleButton Name="ToggleButton"
+                                        Grid.Column="1"
+                                        Width="20"
+                                        Focusable="False"
+                                        ClickMode="Press"
+                                        IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{StaticResource ButtonBg}"
+                                                BorderBrush="{StaticResource Divider}"
+                                                BorderThickness="1,1,1,1"
+                                                CornerRadius="0,2,2,0">
+                                            <Path x:Name="Arrow"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  Data="M 0 0 L 4 4 L 8 0 Z"
+                                                  Fill="{StaticResource PrimaryText}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <Popup Name="Popup"
+                                 Placement="Bottom"
+                                 IsOpen="{TemplateBinding IsDropDownOpen}"
+                                 AllowsTransparency="True"
+                                 Focusable="False"
+                                 PopupAnimation="Slide">
+                                <Grid Name="DropDown"
+                                      SnapsToDevicePixels="True"
+                                      MinWidth="{TemplateBinding ActualWidth}"
+                                      MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder"
+                                            Background="{StaticResource ButtonBg}"
+                                            BorderThickness="1"
+                                            BorderBrush="{StaticResource Divider}">
+                                        <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="false">
+                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                            </Trigger>
+                            <Trigger Property="IsGrouping" Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Resources>
+                <Style TargetType="ComboBoxItem">
+                    <Setter Property="Background" Value="{StaticResource ButtonBg}"/>
+                    <Setter Property="Foreground" Value="{StaticResource PrimaryText}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="4,2"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ComboBoxItem">
+                                <Border Name="Border"
+                                        Background="{TemplateBinding Background}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsHighlighted" Value="true">
+                                        <Setter TargetName="Border" Property="Background" Value="{StaticResource Divider}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="false">
+                                        <Setter Property="Foreground" Value="{StaticResource MutedText}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Style.Resources>
+        </Style>
+
+        <!-- Clock Button Style -->
+        <Style x:Key="ClockButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource ClockInBg}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="2">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource ClockInHover}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Clock Out Button Style -->
+        <Style x:Key="ClockOutButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource ClockOutBg}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="2">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource ClockOutHover}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel>
+            <!-- Department Selector -->
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Center" 
+                        Margin="0,0,0,12">
+                <TextBlock Text="Department:" 
+                           FontFamily="Segoe UI" 
+                           FontSize="12"
+                           Foreground="{StaticResource MutedText}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"/>
+                <ComboBox x:Name="DepartmentComboBox"
+                          Width="150"
+                          Height="28"
+                          Style="{StaticResource DarkComboBoxStyle}"
+                          FontFamily="Segoe UI"
+                          FontSize="12"
+                          SelectionChanged="DepartmentComboBox_SelectionChanged"/>
+            </StackPanel>
+
+            <!-- Status Label -->
+            <TextBlock x:Name="StatusLabel" 
+                       Text="Status: CLOCKED OUT" 
+                       FontFamily="Segoe UI" 
+                       FontSize="20" 
+                       FontWeight="Bold"
+                       Foreground="{StaticResource MutedText}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,8"/>
+
+            <!-- Week Label -->
+            <TextBlock x:Name="WeekLabel" 
+                       Text="Current week: 2024-01-01 (Mon) - 2024-01-07 (Sun)" 
+                       FontFamily="Segoe UI" 
+                       FontSize="13"
+                       Foreground="{StaticResource MutedText}"
+                       HorizontalAlignment="Center"
+                       Margin="0,2"/>
+
+            <!-- Hours Title -->
+            <TextBlock Text="Hours this week:" 
+                       FontFamily="Segoe UI" 
+                       FontSize="15"
+                       Foreground="{StaticResource PrimaryText}"
+                       HorizontalAlignment="Center"
+                       Margin="0,16,0,0"/>
+
+            <!-- Hours Display -->
+            <TextBlock x:Name="HoursLabel" 
+                       Text="00:00:00" 
+                       FontFamily="Consolas" 
+                       FontSize="30" 
+                       FontWeight="Bold"
+                       Foreground="{StaticResource Accent}"
+                       HorizontalAlignment="Center"
+                       Margin="0,2,0,14"/>
+
+            <!-- Clock Button -->
+            <Button x:Name="ClockButton"
+                    Content="Clock In"
+                    Style="{StaticResource ClockButtonStyle}"
+                    Width="200"
+                    Height="40"
+                    HorizontalAlignment="Center"
+                    Margin="0,8"
+                    Click="ClockButton_Click"/>
+
+            <!-- Footer -->
+            <TextBlock Text="Week is Monday 00:00 to Sunday 23:59:59&#x0a;All times are local." 
+                       FontFamily="Segoe UI" 
+                       FontSize="10"
+                       Foreground="{StaticResource MutedText}"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"
+                       Margin="0,8,0,4"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
+
